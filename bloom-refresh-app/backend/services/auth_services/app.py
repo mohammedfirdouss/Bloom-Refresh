@@ -1,3 +1,5 @@
+"""Authentication service providing user registration, login, and token refresh endpoints."""
+
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, JWTManager
@@ -5,7 +7,7 @@ import boto3 # For Cognito integration
 import os
 import structlog
 from utils import hash_password, verify_password
-from models import AuthUserModel
+
 app = Flask(__name__)
 
 # Configuration
