@@ -2,8 +2,6 @@ from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute, MapAttribute, UTCDateTimeAttribute
 import os
 from datetime import datetime
-from dataclasses import dataclass
-from typing import Optional
 
 # This file defines data models for the Auth service using PynamoDB .
 # The actual table will be provisioned via AWS CDK.
@@ -19,13 +17,6 @@ from typing import Optional
 # source of truth for all user attributes managed by Auth service), then passwordHash
 # might not be stored here directly if Cognito handles auth.
 # For the purpose of this model, we'll assume `userId` is the Cognito `sub`.
-
-@dataclass
-class AuthUserModel:
-    email: str
-    password_hash: str
-    role: str
-    user_id: Optional[str] = None
 
 class AuthUserModel(Model):
     """
