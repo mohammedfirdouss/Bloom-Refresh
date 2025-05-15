@@ -3,7 +3,6 @@ from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager # To protect endpoints and get user identity
 import os
 import structlog
-from datetime import datetime
 # from .models import ProfileModel # Placeholder for PynamoDB or similar
 
 app = Flask(__name__)
