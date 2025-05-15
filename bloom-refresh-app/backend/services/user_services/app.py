@@ -3,7 +3,7 @@ from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager # To protect endpoints and get user identity
 import os
 import structlog
-from datetime import datetime
+from datetime import datetime, UTC
 # from .models import ProfileModel # Placeholder for PynamoDB or similar
 
 app = Flask(__name__)
@@ -71,7 +71,7 @@ class UserProfile(Resource):
         # They are set at creation (joinedAt would be when profile is first made, likely post-Cognito signup)
         if not updated_profile_data.get("userId"): # If it's a new profile being created via PUT (less common for PUT)
             updated_profile_data["userId"] = userId
-            updated_profile_data["joinedAt"] = datetime.utcnow().isoformat() + "Z" # Placeholder
+            updated_profile_data["joinedAt"] = datetime.now(UTC).isoformat()
 
         profiles_db[userId] = updated_profile_data
         logger.info("user.profile.put.success", userId=userId, updated_fields=list(data.keys()))
