@@ -1,9 +1,11 @@
+"""Reporting service application."""
+
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager # To protect endpoints and get user identity
 import os
 import structlog
-from datetime import datetime
+from datetime import datetime, UTC
 import uuid # For generating reportId
 
 # from .models import ReportModel # Placeholder for PynamoDB or similar
@@ -48,7 +50,7 @@ class EventReport(Resource):
             "submittedBy": submitter_id,
             "bagsCollected": bags_collected,
             "photoUrls": photo_urls,
-            "submittedAt": datetime.utcnow().isoformat() + "Z",
+            "submittedAt": datetime.now(UTC).isoformat(),
             "otherMetrics": data.get("otherMetrics", {}) # Allow for additional flexible metrics
         }
         # TODO: Replace with DynamoDB save: ReportModel(**new_report).save()

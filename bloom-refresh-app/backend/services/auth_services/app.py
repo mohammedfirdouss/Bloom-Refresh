@@ -6,8 +6,8 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 import boto3 # For Cognito integration
 import os
 import structlog
-from utils import hash_password, verify_password
-
+from .utils import hash_password, verify_password
+from datetime import datetime, UTC
 app = Flask(__name__)
 
 # Configuration

@@ -1,3 +1,5 @@
+"""User service application."""
+
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager # To protect endpoints and get user identity

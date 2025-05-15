@@ -1,9 +1,11 @@
+"""Event service application."""
+
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager
 import os
 import structlog
-from datetime import datetime
+from datetime import datetime, UTC
 import uuid # For generating eventId and rsvpId if not using database auto-increment
 
 # from .models import EventModel, RsvpModel # Placeholder for PynamoDB or similar
@@ -83,7 +85,7 @@ class EventList(Resource):
             "dateTime": date_time_str,
             "capacity": data.get("capacity"),
             "supplies": data.get("supplies", "Bring your own if possible."),
-            "createdAt": datetime.utcnow().isoformat() + "Z"
+            "createdAt": datetime.now(UTC).isoformat()
         }
         # TODO: Replace with DynamoDB save: EventModel(**new_event).save()
         events_db[event_id] = new_event
