@@ -2,6 +2,18 @@ import { create } from 'zustand';
 import apiClient from '@/lib/apiClient'; // Assuming apiClient is in lib
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+interface SignupData {
+  username: string;
+  password: string;
+  email: string;
+  // Add other required signup fields
+}
+
 interface User {
   id: string;
   username: string;
@@ -14,12 +26,11 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  loginUser: (credentials: any) => Promise<void>;
-  signupUser: (userData: any) => Promise<void>;
+  loginUser: (credentials: LoginCredentials) => Promise<void>;
+  signupUser: (userData: SignupData) => Promise<void>;
   logoutUser: () => void;
   setAuthLoading: (loading: boolean) => void;
   clearError: () => void;
-  // initializeAuth: () => void; // Removed as middleware handles persistence
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -31,13 +42,19 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false, // Set to false initially, true when an auth operation starts
       error: null,
 
-      setAuthLoading: (loading) => set({ isLoading: loading, error: null }),
+      setAuthLoading: (loading) => set({ isLoading: loading }),
       clearError: () => set({ error: null }),
 
       loginUser: async (credentials) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await apiClient.login(credentials);
+          interface AuthResponse {
+            user: User;
+            access_token: string;
+            message?: string;
+          }
+
+          const response: AuthResponse = await apiClient.login(credentials);
           // Assuming response contains { user: User, access_token: string }
           // Adjust based on your actual backend response structure
           if (response && response.access_token && response.user) {
@@ -91,6 +108,9 @@ export const useAuthStore = create<AuthState>()(
           console.error("Signup error in store:", error);
           set({
             isLoading: false,
+            user: null,
+            token: null,
+            isAuthenticated: false,
             error: error.message || 'Failed to sign up. Please try again.',
           });
         }
@@ -116,18 +136,20 @@ export const useAuthStore = create<AuthState>()(
       name: 'auth-storage', // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
       onRehydrateStorage: (state) => {
-        console.log("Hydration finished for auth-storage");
+        // Log only in development environment
+        if (process.env.NODE_ENV === 'development') {
+          console.log("Hydration finished for auth-storage");
+        }
         return (state, error) => {
           if (error) {
             console.error("An error happened during auth storage hydration", error);
           } else {
-            // Check if token exists and is valid (e.g. not expired) - advanced
-            // For now, if token exists, we assume authenticated, but set isLoading to false.
-            // Components can then verify auth status if needed.
-            if (state?.token) {
-              state.isAuthenticated = true; // Or verify token validity here
+            if (state) {
+              if (state.token) {
+                state.isAuthenticated = true;
+              }
+              state.isLoading = false;
             }
-            state.isLoading = false; // Done loading from storage
           }
         };
       },
