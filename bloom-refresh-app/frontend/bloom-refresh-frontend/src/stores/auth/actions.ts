@@ -1,11 +1,9 @@
-import { StateCreator, SetState, GetState } from 'zustand';
 import { AuthState } from '@/types/auth';
 import apiClient from '@/api/client';
 import { refreshTokenIfNeeded } from '@/lib/tokenRefresh';
 
 export const authActions = (
-  set: SetState<AuthState>,
-  get: GetState<AuthState>
+  set: (state: Partial<AuthState>) => void
 ) => ({
   setAuthLoading: (loading: boolean) => set({ isLoading: loading }),
   clearError: () => set({ error: null }),

@@ -1,11 +1,12 @@
 import { create } from 'zustand';
-import apiClient from '@/api/client'; // Assuming apiClient is in lib
+import apiClient from '@/api/client';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { refreshTokenIfNeeded } from '@/lib/tokenRefresh';
 
 interface User {
   id: string;
   username: string;
+  role: 'volunteer' | 'organizer';
   // Add other user properties as needed from backend response
 }
 
@@ -152,20 +153,3 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
-
-// Initial check if already authenticated (e.g. on app load)
-// This can be called in your _app.tsx or a main layout component
-// to ensure the store is correctly initialized with persisted data.
-// However, with `persist` middleware, this is largely automatic.
-// The `isLoading` state in the store can be used to show a loading spinner
-// until rehydration is complete.
-
-// Example of how a component might check auth status on mount:
-// useEffect(() => {
-//   const { token, isLoading, isAuthenticated } = useAuthStore.getState();
-//   if (!isLoading && token && !isAuthenticated) {
-//     // Potentially re-validate token with backend if needed
-//     // or just set isAuthenticated based on token presence after hydration
-//   }
-// }, []);
-
