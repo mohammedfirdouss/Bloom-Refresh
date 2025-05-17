@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import EventCreationWizard from '@/features/events/components/events/EventCreationWizard';
+import EventCreationWizard from '@/features/events/components/EventCreationWizard';
 import { toast } from 'sonner';
 import apiClient from '@/api/client';
 

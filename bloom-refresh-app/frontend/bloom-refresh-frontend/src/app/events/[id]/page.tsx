@@ -28,20 +28,20 @@ const EventDetailPage = () => {
   // Fetch event details
   const { data: event, isLoading, error } = useQuery<Event>({
     queryKey: ['event', eventId],
-    queryFn: () => apiClient.getEventById(eventId),
+    queryFn: () => apiClient.get("/events/" + eventId),
     enabled: !!eventId,
   });
 
   // RSVP status
   const { data: userRsvpStatus, isLoading: isLoadingRsvp } = useQuery({
     queryKey: ['rsvp', eventId],
-    queryFn: () => apiClient.checkRsvpStatus(eventId),
+    queryFn: () => apiClient.get("/rsvps?eventId=" + eventId),
     enabled: !!eventId,
   });
 
   // RSVP mutation
   const rsvpMutation = useMutation({
-    mutationFn: () => apiClient.rsvpToEvent(eventId),
+    mutationFn: () => apiClient.post("/rsvps", { eventId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event', eventId] });
       queryClient.invalidateQueries({ queryKey: ['rsvp', eventId] });
@@ -50,7 +50,7 @@ const EventDetailPage = () => {
 
   // Withdraw RSVP mutation
   const withdrawRsvpMutation = useMutation({
-    mutationFn: () => apiClient.withdrawRsvp(eventId),
+    mutationFn: () => apiClient.delete("/rsvps/" + eventId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event', eventId] });
       queryClient.invalidateQueries({ queryKey: ['rsvp', eventId] });

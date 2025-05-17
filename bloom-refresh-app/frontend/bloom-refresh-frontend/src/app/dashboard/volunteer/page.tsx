@@ -104,7 +104,7 @@ const VolunteerDashboardPage = () => {
     error: upcomingError
   } = useQuery<Event[]>({
     queryKey: ['user-events', 'upcoming', user?.id],
-    queryFn: () => apiClient.getUserEvents('upcoming'),
+    queryFn: () => apiClient.get("/events?userId=" + user?.id + "&status=upcoming"),
     enabled: !!isAuthenticated && !!user?.id,
   });
 
@@ -115,7 +115,7 @@ const VolunteerDashboardPage = () => {
     error: pastError
   } = useQuery<Event[]>({
     queryKey: ['user-events', 'past', user?.id],
-    queryFn: () => apiClient.getUserEvents('past'),
+    queryFn: () => apiClient.get("/events?userId=" + user?.id + "&status=past"),
     enabled: !!isAuthenticated && !!user?.id && activeTab === 'past',
   });
 
@@ -126,7 +126,7 @@ const VolunteerDashboardPage = () => {
     error: reportsError
   } = useQuery<Report[]>({
     queryKey: ['user-reports', user?.id],
-    queryFn: () => apiClient.getUserReports(user?.id as string),
+    queryFn: () => apiClient.get("/reports?userId=" + user?.id),
     enabled: !!isAuthenticated && !!user?.id && activeTab === 'reports',
   });
 

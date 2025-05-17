@@ -126,7 +126,7 @@ const OrganizerDashboardPage = () => {
     error: activeError
   } = useQuery<Event[]>({
     queryKey: ['organizer-events', 'active', user?.id],
-    queryFn: () => apiClient.getOrganizerEvents('active'),
+    queryFn: () => apiClient.get("/events?organizerId=" + user?.id + "&status=active"),
     enabled: !!isAuthenticated && !!user?.id && user?.role === 'organizer',
   });
 
@@ -137,7 +137,7 @@ const OrganizerDashboardPage = () => {
     error: pastError
   } = useQuery<Event[]>({
     queryKey: ['organizer-events', 'past', user?.id],
-    queryFn: () => apiClient.getOrganizerEvents('past'),
+    queryFn: () => apiClient.get("/events?organizerId=" + user?.id + "&status=past"),
     enabled: !!isAuthenticated && !!user?.id && user?.role === 'organizer' && activeTab === 'past',
   });
 
@@ -148,7 +148,7 @@ const OrganizerDashboardPage = () => {
     error: reportsError
   } = useQuery<Report[]>({
     queryKey: ['organizer-reports', user?.id],
-    queryFn: () => apiClient.getOrganizerReports(),
+    queryFn: () => apiClient.get("/reports?organizerId=" + user?.id),
     enabled: !!isAuthenticated && !!user?.id && user?.role === 'organizer' && activeTab === 'reports',
   });
 
