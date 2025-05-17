@@ -23,7 +23,7 @@ const ImpactPage = () => {
     error 
   } = useQuery<ImpactStats>({
     queryKey: ['impact-stats'],
-    queryFn: () => apiClient.getImpactStats(),
+    queryFn: () => apiClient.get("/impact-stats"),
   });
 
   if (error) {

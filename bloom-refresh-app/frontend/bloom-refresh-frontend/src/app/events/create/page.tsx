@@ -1,5 +1,5 @@
 
-import EventCreationWizard from "@/features/events/components/events/EventCreationWizard";
+import EventCreationWizard from "@/features/events/components/EventCreationWizard";
 import React from "react";
 
 const CreateEventPage = () => {

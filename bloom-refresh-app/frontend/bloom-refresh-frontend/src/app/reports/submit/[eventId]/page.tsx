@@ -24,18 +24,18 @@ const reportSchema = yup.object().shape({
   itemsCollected: yup
     .number()
     .nullable()
-    .transform((value) => (isNaN(value) ? null : value))
+    .transform((value: unknown) => (isNaN(Number(value)) ? null : value))
     .positive('Must be a positive number')
     .integer('Must be a whole number'),
   areaCleanedSqFt: yup
     .number()
     .nullable()
-    .transform((value) => (isNaN(value) ? null : value))
+    .transform((value: unknown) => (isNaN(Number(value)) ? null : value))
     .positive('Must be a positive number'),
   treesPlanted: yup
     .number()
     .nullable()
-    .transform((value) => (isNaN(value) ? null : value))
+    .transform((value: unknown) => (isNaN(Number(value)) ? null : value))
     .positive('Must be a positive number')
     .integer('Must be a whole number'),
   photoUrl1: yup
@@ -91,7 +91,7 @@ const SubmitReportPage = () => {
     error: eventError 
   } = useQuery<Event>({
     queryKey: ['event', eventId],
-    queryFn: () => apiClient.getEventById(eventId),
+    queryFn: () => apiClient.get("/events/" + eventId),
     enabled: !!eventId,
   });
 
@@ -101,7 +101,7 @@ const SubmitReportPage = () => {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<ReportFormInputs>({
-    resolver: yupResolver(reportSchema),
+    resolver: yupResolver<ReportFormInputs, any, any>(reportSchema),
     defaultValues: {
       volunteersAttended: undefined,
       itemsCollected: null,
@@ -136,7 +136,7 @@ const SubmitReportPage = () => {
         notes: reportData.notes || undefined,
       };
 
-      return apiClient.submitReport(eventId, finalReportData);
+      return apiClient.post("/reports/" + eventId, finalReportData);
     },
     onSuccess: () => {
       toast.success('Report Submitted Successfully', {
