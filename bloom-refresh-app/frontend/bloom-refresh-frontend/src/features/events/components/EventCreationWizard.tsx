@@ -6,10 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import apiClient from '@/lib/apiClient';
+import apiClient from '@/api/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import EventMap from './EventMap';
 
 // Define the schema for event creation form validation
 const eventSchema = yup.object().shape({
@@ -165,13 +164,6 @@ const EventCreationWizard = () => {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Select Location on Map</label>
-        <EventMap
-          center={selectedCoords || DEFAULT_CENTER}
-          marker={selectedCoords || undefined}
-          onSelectLocation={(lat, lng) => setSelectedCoords([lat, lng])}
-          selectable
-          height="350px"
-        />
         {!selectedCoords && <p className="text-xs text-red-600 mt-2">Click on the map to select a location.</p>}
       </div>
       <div className="flex justify-between gap-2">
