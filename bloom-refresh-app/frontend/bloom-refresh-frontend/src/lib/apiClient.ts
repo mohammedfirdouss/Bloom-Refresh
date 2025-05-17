@@ -11,40 +11,53 @@ const getApiBaseUrl = () => {
 
 const apiClient = {
   async request(endpoint: string, options: RequestInit = {}) {
-    const baseUrl = getApiBaseUrl();
-    const token = useAuthStore.getState().token;
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...options.headers,
-    };
+    // Mock data for testing without backend
+    console.log(`Mock API call to: ${endpoint}`, options);
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    // Mock responses based on endpoint
+    if (endpoint.includes('/auth/login')) {
+      return { token: 'mock-token', user: { id: '1', email: 'test@example.com' } };
+    }
+    
+    if (endpoint.includes('/events')) {
+      return {
+        events: [
+          {
+            id: '1',
+            name: 'Beach Cleanup',
+            eventName: 'Beach Cleanup',
+            description: 'Help clean up the local beach',
+            date: '2024-04-01',
+            location: { lat: 40.7128, lng: -74.0060 },
+            category: 'cleanup'
+          },
+          {
+            id: '2',
+            name: 'Tree Planting',
+            eventName: 'Tree Planting',
+            description: 'Plant trees in the community park',
+            date: '2024-04-15',
+            location: { lat: 40.7589, lng: -73.9851 },
+            category: 'planting'
+          },
+          {
+            id: '3',
+            name: 'Community Garden',
+            eventName: 'Community Garden',
+            description: 'Help maintain our community garden',
+            date: '2024-04-20',
+            location: { lat: 40.7829, lng: -73.9654 },
+            category: 'gardening'
+          }
+        ]
+      };
     }
 
-    try {
-      const response = await fetch(`${baseUrl}${endpoint}`, {
-        ...options,
-        headers,
-      });
-
-      if (!response.ok) {
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch (e) {
-          errorData = { message: response.statusText };
-        }
-        throw new Error(errorData.message || `API request failed with status ${response.status}`);
-      }
-      if (response.status === 204) {
-        return null; // No content
-      }
-      return await response.json();
-    } catch (error) {
-      console.error(`API Error calling ${endpoint}:`, error);
-      throw error; 
-    }
+    // Default mock response
+    return { message: 'Mock response' };
   },
 
   // Auth Service

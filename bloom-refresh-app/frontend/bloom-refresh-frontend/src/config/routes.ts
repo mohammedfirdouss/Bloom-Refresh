@@ -1,4 +1,3 @@
-// src/config/routes.ts
 export const PROTECTED_PATHS = [
     '/dashboard',
     '/events/create',

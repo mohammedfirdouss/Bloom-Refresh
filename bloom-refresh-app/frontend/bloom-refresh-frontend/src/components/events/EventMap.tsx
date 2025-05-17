@@ -2,19 +2,22 @@
 
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import type { LeafletMouseEvent } from 'leaflet';
+import { LeafletMouseEvent } from 'leaflet';
 import { useMapEvents } from 'react-leaflet';
+import type { MapContainerProps } from 'react-leaflet';
+import type { TileLayerProps } from 'react-leaflet';
+import type { MarkerProps } from 'react-leaflet';
 
 // Dynamically import leaflet components to avoid SSR issues
-const MapContainer = dynamic(
+const MapContainer = dynamic<MapContainerProps>(
   () => import('react-leaflet').then((mod) => mod.MapContainer),
   { ssr: false }
 );
-const TileLayer = dynamic(
+const TileLayer = dynamic<TileLayerProps>(
   () => import('react-leaflet').then((mod) => mod.TileLayer),
   { ssr: false }
 );
-const Marker = dynamic(
+const Marker = dynamic<MarkerProps>(
   () => import('react-leaflet').then((mod) => mod.Marker),
   { ssr: false }
 );
@@ -36,19 +39,14 @@ const LocationSelector = ({ onSelectLocation }: { onSelectLocation: (lat: number
   return null;
 };
 
-const EventMap: React.FC<EventMapProps> = ({ center, marker, onSelectLocation, selectable = false, height = '300px' }) => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
-
+const MapWrapper = ({ center, marker, onSelectLocation, selectable, height }: EventMapProps) => {
   return (
-    <MapContainer center={center} zoom={13} style={{ height, width: '100%' }} scrollWheelZoom={true}>
+    <MapContainer
+      center={center}
+      zoom={13}
+      style={{ height, width: '100%' }}
+      scrollWheelZoom={true}
+    >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -57,6 +55,10 @@ const EventMap: React.FC<EventMapProps> = ({ center, marker, onSelectLocation, s
       {selectable && onSelectLocation && <LocationSelector onSelectLocation={onSelectLocation} />}
     </MapContainer>
   );
+};
+
+const EventMap: React.FC<EventMapProps> = (props) => {
+  return <MapWrapper {...props} />;
 };
 
 export default EventMap;
