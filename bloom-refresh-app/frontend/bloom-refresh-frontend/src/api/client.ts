@@ -135,6 +135,24 @@ class ApiClient {
   async delete<T = any>(endpoint: string, params?: any): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE', params });
   }
+
+  // Event-specific methods
+  async createEvent(data: any): Promise<any> {
+    return this.post('/events', data);
+  }
+
+  // Auth methods
+  async refreshToken(): Promise<{ access_token: string }> {
+    return this.post('/auth/refresh');
+  }
+
+  async login(credentials: { username: string; password: string }) {
+    return this.post('/auth/login', credentials);
+  }
+
+  async signup(userData: { username: string; password: string; email: string; role: 'volunteer' | 'organizer' }) {
+    return this.post('/auth/signup', userData);
+  }
 }
 
 // Create and export API client instance
