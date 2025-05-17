@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import apiClient from '@/lib/apiClient'; // Assuming apiClient is in lib
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { refreshTokenIfNeeded } from '@/lib/tokenRefresh';
+
+interface User {
+  id: string;
+  username: string;
+  // Add other user properties as needed from backend response
+}
 
 interface LoginCredentials {
   username: string;
@@ -11,13 +18,13 @@ interface SignupData {
   username: string;
   password: string;
   email: string;
-  // Add other required signup fields
+  role: 'volunteer' | 'organizer';
 }
 
-interface User {
-  id: string;
-  username: string;
-  // Add other user properties as needed from backend response
+interface AuthResponse {
+  user: User;
+  access_token: string;
+  message?: string;
 }
 
 interface AuthState {
@@ -31,6 +38,8 @@ interface AuthState {
   logoutUser: () => void;
   setAuthLoading: (loading: boolean) => void;
   clearError: () => void;
+  setToken: (token: string) => void;
+  refreshToken: () => Promise<string | null>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -44,19 +53,16 @@ export const useAuthStore = create<AuthState>()(
 
       setAuthLoading: (loading) => set({ isLoading: loading }),
       clearError: () => set({ error: null }),
+      setToken: (token) => set({ token, isAuthenticated: !!token }),
 
-      loginUser: async (credentials) => {
+      refreshToken: async (): Promise<string | null> => {
+        return await refreshTokenIfNeeded();
+      },
+
+      loginUser: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
         try {
-          interface AuthResponse {
-            user: User;
-            access_token: string;
-            message?: string;
-          }
-
           const response: AuthResponse = await apiClient.login(credentials);
-          // Assuming response contains { user: User, access_token: string }
-          // Adjust based on your actual backend response structure
           if (response && response.access_token && response.user) {
             set({
               user: response.user,
@@ -66,7 +72,6 @@ export const useAuthStore = create<AuthState>()(
               error: null,
             });
           } else {
-            // Handle cases where token or user might be missing even if API call was 'successful'
             throw new Error(response.message || 'Login failed: Invalid response from server');
           }
         } catch (error: any) {
@@ -78,17 +83,13 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: error.message || 'Failed to login. Please check your credentials.',
           });
-          // Optionally re-throw or handle more specifically
         }
       },
 
-      signupUser: async (userData) => {
+      signupUser: async (userData: SignupData) => {
         set({ isLoading: true, error: null });
         try {
-          // Assuming signup also returns user and token, or a success message
-          // Adjust based on your actual backend response structure for signup
-          const response = await apiClient.signup(userData);
-          // If signup automatically logs in the user:
+          const response: AuthResponse = await apiClient.signup(userData);
           if (response && response.access_token && response.user) {
             set({
               user: response.user,
@@ -98,9 +99,7 @@ export const useAuthStore = create<AuthState>()(
               error: null,
             });
           } else if (response && response.message === "User created successfully") {
-            // If signup only creates user and doesn't log in
             set({ isLoading: false, error: null });
-            // Potentially trigger a notification for the user to log in
           } else {
             throw new Error(response.message || 'Signup failed: Invalid response from server');
           }
@@ -135,21 +134,18 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage', // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
-      onRehydrateStorage: (state) => {
-        // Log only in development environment
+      onRehydrateStorage: () => {
         if (process.env.NODE_ENV === 'development') {
           console.log("Hydration finished for auth-storage");
         }
         return (state, error) => {
           if (error) {
             console.error("An error happened during auth storage hydration", error);
-          } else {
-            if (state) {
-              if (state.token) {
-                state.isAuthenticated = true;
-              }
-              state.isLoading = false;
+          } else if (state) {
+            if (state.token) {
+              state.isAuthenticated = true;
             }
+            state.isLoading = false;
           }
         };
       },
