@@ -1,72 +1,115 @@
 'use client';
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Box, Container, Heading, Text, SimpleGrid, Button, Flex, Link as ChakraLink, useToast } from "@chakra-ui/react";
 import { useAuthStore } from "@/stores/auth/store";
 import apiClient from "@/api/client";
-import dynamic from "next/dynamic";
 import { EventsList } from "@/features/events/components";
+import Hero from "@/components/home/Hero";
+import CallToAction from "@/components/home/CallToAction";
+import HowItWorks from "@/components/home/HowItWorks";
+import ImpactStats from "@/components/home/ImpactStats";
+import Link from "next/link";
 
 export default function Home() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { isAuthenticated, user } = useAuthStore();
+  const toast = useToast();
 
   useEffect(() => {
-    apiClient.get("/events?featured=true&limit=3").then((data) => {
-      setEvents(data.events || []);
-      setLoading(false);
-    });
-  }, []);
+    const fetchEvents = async () => {
+      try {
+        if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
+          const { featuredEvents } = await import('@/lib/mock-data');
+          setEvents(featuredEvents.flatMap(e => e.locations));
+        } else {
+          const response = await apiClient.get('/events/featured');
+          setEvents(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load featured events',
+          status: 'error',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [toast]);
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Welcome to Bloom Refresh</h1>
-      <div className="mb-6 text-center">
-        {isAuthenticated ? (
-          <span className="text-green-700">Logged in as {user?.username}</span>
+    <Box>
+      <Hero />
+      
+      <Container maxW="container.xl" py={8} px={4}>
+        <Box mb={6} textAlign="center">
+          {isAuthenticated ? (
+            <Text color="green.700">Logged in as {user?.username}</Text>
+          ) : (
+            <Text color="gray.600">You are not logged in.</Text>
+          )}
+          <Button mt={4} colorScheme="green" onClick={() => toast({ title: 'This is a toast!', description: 'Chakra UI toasts are easy.', status: 'success' })}>
+            Show Toast
+          </Button>
+        </Box>
+
+        <Heading as="h2" size="xl" mb={4}>Featured Events</Heading>
+        {loading ? (
+          <Text>Loading events...</Text>
+        ) : events.length === 0 ? (
+          <Text>No featured events found.</Text>
         ) : (
-          <span className="text-gray-600">You are not logged in.</span>
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={6} mb={8}>
+            {events.map((event) => (
+              <Box 
+                key={event.id}
+                borderWidth="1px"
+                borderRadius="lg"
+                overflow="hidden"
+                p={4}
+                bg="white"
+                shadow="md"
+              >
+                <Heading size="md" mb={2}>{event.name || event.eventName}</Heading>
+                <Text mb={2} color="gray.700">{event.description}</Text>
+                <Text mb={4} fontSize="sm" color="gray.500">{event.date}</Text>
+                <ChakraLink as={Link} href={`/events/${event.id}`} _hover={{ textDecoration: 'none' }}>
+                  <Button 
+                    colorScheme="green"
+                    width="full"
+                  >
+                    View Event
+                  </Button>
+                </ChakraLink>
+              </Box>
+            ))}
+          </SimpleGrid>
         )}
-      </div>
-      <h2 className="text-2xl font-semibold mb-4">Featured Events</h2>
-      {loading ? (
-        <div>Loading events...</div>
-      ) : events.length === 0 ? (
-        <div>No featured events found.</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {events.map((event) => (
-            <Card key={event.id}>
-              <CardHeader>
-                <CardTitle>{event.name || event.eventName}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-2 text-gray-700">{event.description}</div>
-                <div className="mb-2 text-sm text-gray-500">{event.date}</div>
-                <Button asChild>
-                  <a href={`/events/${event.id}`}>View Event</a>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-      <h2 className="text-2xl font-semibold mb-4">Event Map</h2>
-      <div className="mb-8">
-        {/* EventMap removed */}
-      </div>
-      <div className="flex justify-center gap-4">
-        <Button asChild variant="outline">
-          <a href="/events/browse">Browse All Events</a>
-        </Button>
-        <Button asChild variant="outline">
-          <a href="/events/create">Create New Event</a>
-        </Button>
-      </div>
-      <h2 className="text-2xl font-semibold mb-4">Upcoming Events</h2>
-      <EventsList />
-    </div>
+
+        <Flex justify="center" gap={4} mb={8}>
+          <ChakraLink as={Link} href="/events/browse" _hover={{ textDecoration: 'none' }}>
+            <Button variant="outline">
+              Browse All Events
+            </Button>
+          </ChakraLink>
+          <ChakraLink as={Link} href="/events/create" _hover={{ textDecoration: 'none' }}>
+            <Button variant="outline">
+              Create New Event
+            </Button>
+          </ChakraLink>
+        </Flex>
+
+        <Heading as="h2" size="xl" mb={4}>Upcoming Events</Heading>
+        <EventsList />
+      </Container>
+
+      <ImpactStats />
+      <HowItWorks />
+      <CallToAction />
+    </Box>
   );
 }
