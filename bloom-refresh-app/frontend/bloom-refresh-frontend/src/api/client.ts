@@ -107,9 +107,11 @@ class ApiClient {
         throw customError;
       } else if (error.request) {
         // Request made but no response received
-        throw new Error('No response received from server');
+        console.error("API request failed: Network Error", error);
+        throw new Error("Unable to connect to the server. Please check your connection or try again later.");
       } else {
         // Error setting up request
+        console.error("API request setup error:", error);
         throw error;
       }
     }
