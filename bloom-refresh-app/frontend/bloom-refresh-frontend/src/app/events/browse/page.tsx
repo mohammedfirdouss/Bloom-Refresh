@@ -38,6 +38,7 @@ const BrowseEventsPage = () => {
   const { data: events, isLoading, error, refetch } = useQuery<Event[], Error>({
     queryKey: ['events', dateFilter, locationFilter, categoryFilter],
     queryFn: () => apiClient.get("/events" + buildQueryString()),
+    enabled: false, // Disable automatic fetching
   });
 
   const handleFilterSubmit = (e: React.FormEvent) => {

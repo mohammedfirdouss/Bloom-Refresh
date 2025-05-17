@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { Box, Container, Heading, Text, SimpleGrid, Button, Flex, Link as ChakraLink, useToast } from "@chakra-ui/react";
+import { Box, Container, Heading, Text, SimpleGrid, Button, Flex, Link as ChakraLink } from "@chakra-ui/react";
 import { useAuthStore } from "@/stores/auth/store";
 import apiClient from "@/api/client";
 import { EventsList } from "@/features/events/components";
@@ -14,7 +14,6 @@ export default function Home() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { isAuthenticated, user } = useAuthStore();
-  const toast = useToast();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -28,18 +27,13 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Error fetching events:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load featured events',
-          status: 'error',
-        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchEvents();
-  }, [toast]);
+  }, []);
 
   return (
     <Box>
@@ -54,9 +48,6 @@ export default function Home() {
           ) : (
             <Text color="gray.600">You are not logged in.</Text>
           )}
-          <Button mt={4} colorScheme="green" onClick={() => toast({ title: 'This is a toast!', description: 'Chakra UI toasts are easy.', status: 'success' })}>
-            Show Toast
-          </Button>
         </Box>
 
         <Heading as="h2" size="xl" mb={4}>Featured Events</Heading>
