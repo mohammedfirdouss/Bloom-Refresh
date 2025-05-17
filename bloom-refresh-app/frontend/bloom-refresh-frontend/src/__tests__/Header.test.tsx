@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
-import Header from '@/components/Header';
+import Header from '@/components/common/layout/Header';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({

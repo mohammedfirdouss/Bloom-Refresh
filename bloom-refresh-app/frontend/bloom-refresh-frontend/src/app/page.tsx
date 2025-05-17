@@ -7,7 +7,7 @@ import { useAuthStore } from "@/stores/authStore";
 import apiClient from "@/lib/apiClient";
 import dynamic from "next/dynamic";
 
-const EventMap = dynamic(() => import("@/components/events/EventMap"), { ssr: false });
+const EventMap = dynamic(() => import("@/features/events/components/events/EventMap"), { ssr: false });
 
 export default function Home() {
   const [events, setEvents] = useState<any[]>([]);

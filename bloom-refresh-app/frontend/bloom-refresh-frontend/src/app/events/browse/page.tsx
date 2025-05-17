@@ -6,7 +6,7 @@ import apiClient from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import EventMap from '@/components/events/EventMap';
+import EventMap from '@/features/events/components/events/EventMap';
 
 interface Event {
   id: string;
