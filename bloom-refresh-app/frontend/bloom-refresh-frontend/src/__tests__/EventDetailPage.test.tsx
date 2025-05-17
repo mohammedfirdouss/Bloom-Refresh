@@ -3,8 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import EventDetailPage from '@/app/events/[id]/page';
-import { useAuthStore } from '@/stores/authStore';
-import apiClient from '@/lib/apiClient';
+import { useAuthStore } from '@/stores/auth/store';
+import apiClient from '@/api/client';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({

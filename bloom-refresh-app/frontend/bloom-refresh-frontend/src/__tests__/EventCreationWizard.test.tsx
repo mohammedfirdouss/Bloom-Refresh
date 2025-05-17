@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import EventCreationWizard from '@/features/events/components/events/EventCreationWizard';
 import { toast } from 'sonner';
-import apiClient from '@/lib/apiClient';
+import apiClient from '@/api/client';
 
 // Mock the API client
 jest.mock('@/lib/apiClient', () => ({

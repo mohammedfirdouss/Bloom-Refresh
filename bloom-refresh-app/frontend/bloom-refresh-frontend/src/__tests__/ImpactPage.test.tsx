@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ImpactPage from '@/app/impact/page';
-import apiClient from '@/lib/apiClient';
+import apiClient from '@/api/client';
 import { toast } from 'sonner';
 
 // Mock the API client
