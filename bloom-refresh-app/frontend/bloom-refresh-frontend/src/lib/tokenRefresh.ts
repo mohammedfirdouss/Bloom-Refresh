@@ -1,5 +1,5 @@
-import apiClient from './apiClient';
-import { useAuthStore } from '@/stores/authStore';
+import apiClient from '../api/client';
+import { useAuthStore } from '@/stores/auth/store';
 
 const REFRESH_THRESHOLD = 5 * 60 * 1000; // 5 minutes in milliseconds
 

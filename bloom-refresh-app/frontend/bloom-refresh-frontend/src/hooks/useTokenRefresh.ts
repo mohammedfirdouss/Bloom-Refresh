@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/auth/store';
 
 const REFRESH_INTERVAL = 4 * 60 * 1000; // 4 minutes
 
