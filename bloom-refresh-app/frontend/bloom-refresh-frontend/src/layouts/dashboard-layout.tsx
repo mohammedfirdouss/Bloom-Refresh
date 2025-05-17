@@ -1,7 +1,8 @@
-import { Header } from "@/components/common/layout/Header";
-import { Sidebar } from "@/components/common/layout/Sidebar";
+import { ReactNode } from 'react';
+import Header from "@/components/common/layout/Header";
+import { Sidebar } from "@/components/common/layout/SideBar";
 
-export function DashboardLayout({ children }) {
+export function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Header />
