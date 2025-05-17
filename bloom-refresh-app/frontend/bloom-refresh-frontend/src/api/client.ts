@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { refreshTokenIfNeeded } from '@/lib/tokenRefresh';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/auth/store';
 
 // Types for the API client
 export interface ApiClientOptions {
@@ -92,7 +92,7 @@ class ApiClient {
         ...options,
       });
       
-      return response.data;
+      return (response as AxiosResponse<T>).data;
     } catch (error: any) {
       // Enhanced error handling
       if (error.response) {
