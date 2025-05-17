@@ -14,7 +14,7 @@ export default function Home() {
   const { isAuthenticated, user } = useAuthStore();
 
   useEffect(() => {
-    apiClient.getEvents("?featured=true&limit=3").then((data) => {
+    apiClient.get("/events?featured=true&limit=3").then((data) => {
       setEvents(data.events || []);
       setLoading(false);
     });
