@@ -3,11 +3,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/stores/authStore";
-import apiClient from "@/lib/apiClient";
+import { useAuthStore } from "@/stores/auth/store";
+import apiClient from "@/api/client";
 import dynamic from "next/dynamic";
-
-const EventMap = dynamic(() => import("@/features/events/components/events/EventMap"), { ssr: false });
+import { EventsList } from "@/features/events/components";
 
 export default function Home() {
   const [events, setEvents] = useState<any[]>([]);
@@ -56,7 +55,7 @@ export default function Home() {
       )}
       <h2 className="text-2xl font-semibold mb-4">Event Map</h2>
       <div className="mb-8">
-        <EventMap center={[34.0522, -118.2437]} height="350px" />
+        {/* EventMap removed */}
       </div>
       <div className="flex justify-center gap-4">
         <Button asChild variant="outline">
@@ -66,6 +65,8 @@ export default function Home() {
           <a href="/events/create">Create New Event</a>
         </Button>
       </div>
+      <h2 className="text-2xl font-semibold mb-4">Upcoming Events</h2>
+      <EventsList />
     </div>
   );
 }

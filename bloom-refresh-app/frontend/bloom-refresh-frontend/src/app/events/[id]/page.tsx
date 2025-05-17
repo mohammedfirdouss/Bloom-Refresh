@@ -1,9 +1,8 @@
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import apiClient from '@/lib/apiClient';
+import apiClient from '@/api/client';
 import { Button } from '@/components/ui/button';
-import EventMap from '@/features/events/components/events/EventMap';
 
 interface Event {
   id: string;
@@ -110,19 +109,6 @@ const EventDetailPage = () => {
             <div className="bg-green-600 h-2.5 rounded-full" style={{ width: `${volunteerProgressPercent}%` }}></div>
           </div>
         </div>
-        {event.mapCoordinates && (
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold mb-2">Event Location</h3>
-            <div className="h-64 rounded-md overflow-hidden border">
-              <EventMap
-                center={[event.mapCoordinates.lat, event.mapCoordinates.lng]}
-                marker={[event.mapCoordinates.lat, event.mapCoordinates.lng]}
-                selectable={false}
-                height="100%"
-              />
-            </div>
-          </div>
-        )}
         <div className="flex justify-end mt-6">
           {isLoadingRsvp ? (
             <Button disabled>Checking RSVP status...</Button>

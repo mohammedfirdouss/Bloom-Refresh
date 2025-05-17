@@ -8,9 +8,9 @@ import * as yup from 'yup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/auth/store';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import apiClient from '@/lib/apiClient';
+import apiClient from '@/api/client';
 import { toast } from 'sonner';
 import Link from 'next/link';
 

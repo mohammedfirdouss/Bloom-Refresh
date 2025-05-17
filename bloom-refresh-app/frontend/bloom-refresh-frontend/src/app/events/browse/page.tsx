@@ -2,11 +2,10 @@
 
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import apiClient from '@/lib/apiClient';
+import apiClient from '@/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import EventMap from '@/features/events/components/events/EventMap';
 
 interface Event {
   id: string;
@@ -107,12 +106,6 @@ const BrowseEventsPage = () => {
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Event Locations</h2>
         <div className="w-full h-[350px] rounded-lg overflow-hidden border">
-          <EventMap
-            center={mapCenter}
-            marker={undefined}
-            selectable={false}
-            height="350px"
-          />
           {/* Markers for each event will be added in a future enhancement (clustered markers, popups, etc.) */}
         </div>
       </div>
