@@ -1,7 +1,23 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import type { LeafletMouseEvent } from 'leaflet';
+import { useMapEvents } from 'react-leaflet';
+
+// Dynamically import leaflet components to avoid SSR issues
+const MapContainer = dynamic(
+  () => import('react-leaflet').then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import('react-leaflet').then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import('react-leaflet').then((mod) => mod.Marker),
+  { ssr: false }
+);
 
 interface EventMapProps {
   center: [number, number];
@@ -12,7 +28,7 @@ interface EventMapProps {
 }
 
 const LocationSelector = ({ onSelectLocation }: { onSelectLocation: (lat: number, lng: number) => void }) => {
-  useMapEvents({
+  const mapEvents = useMapEvents({
     click(e: LeafletMouseEvent) {
       onSelectLocation(e.latlng.lat, e.latlng.lng);
     },
@@ -21,6 +37,16 @@ const LocationSelector = ({ onSelectLocation }: { onSelectLocation: (lat: number
 };
 
 const EventMap: React.FC<EventMapProps> = ({ center, marker, onSelectLocation, selectable = false, height = '300px' }) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <MapContainer center={center} zoom={13} style={{ height, width: '100%' }} scrollWheelZoom={true}>
       <TileLayer
@@ -33,4 +59,4 @@ const EventMap: React.FC<EventMapProps> = ({ center, marker, onSelectLocation, s
   );
 };
 
-export default EventMap; 
+export default EventMap;
