@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 
 const PARALLAX_FACTOR = 0.2;
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 interface StatCardProps {
   icon: React.ElementType;
