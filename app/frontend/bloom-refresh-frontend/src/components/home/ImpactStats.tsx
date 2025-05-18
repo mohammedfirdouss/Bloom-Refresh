@@ -4,7 +4,7 @@ import { Box, Container, Heading, Text, SimpleGrid, Icon, Flex } from '@chakra-u
 import { Users, Calendar, Leaf, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 const stats = [
   {
