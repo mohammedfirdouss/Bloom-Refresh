@@ -1,9 +1,8 @@
-import { SetState, GetState } from 'zustand';
 import { UIState } from '@/types/ui';
 
 export const uiActions = (
-  set: SetState<UIState>,
-  get: GetState<UIState>
+  set: (partial: Partial<UIState> | ((state: UIState) => Partial<UIState>), replace?: boolean) => void,
+  get: () => UIState
 ) => ({
   setTheme: (theme: 'light' | 'dark') => set({ theme }),
   toggleSidebar: () => set(state => ({ isSidebarOpen: !state.isSidebarOpen })),
