@@ -87,6 +87,7 @@ class ApiClient {
     options: AxiosRequestConfig = {}
   ): Promise<T> {
     try {
+      console.log(`Making request to: ${this.baseURL}${endpoint}`);
       const response = await this.client.request<T, R>({
         url: endpoint,
         ...options,
@@ -107,11 +108,19 @@ class ApiClient {
         throw customError;
       } else if (error.request) {
         // Request made but no response received
-        console.error("API request failed: Network Error", error);
+        console.error("API request failed: Network Error", {
+          url: `${this.baseURL}${endpoint}`,
+          error: error.message,
+          config: error.config
+        });
         throw new Error("Unable to connect to the server. Please check your connection or try again later.");
       } else {
         // Error setting up request
-        console.error("API request setup error:", error);
+        console.error("API request setup error:", {
+          url: `${this.baseURL}${endpoint}`,
+          error: error.message,
+          config: error.config
+        });
         throw error;
       }
     }
@@ -158,7 +167,7 @@ class ApiClient {
 }
 
 // Create and export API client instance
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
 const apiClient = new ApiClient({ baseURL: apiBaseUrl });
 
 export default apiClient;
