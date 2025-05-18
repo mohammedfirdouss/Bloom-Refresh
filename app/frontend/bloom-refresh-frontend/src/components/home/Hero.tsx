@@ -5,6 +5,8 @@ import { Box, Button, Container, Flex, Heading, Text, Icon } from "@chakra-ui/re
 import { ArrowRight, MapPin, Calendar, Users } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const PARALLAX_FACTOR = 0.2;
 
@@ -16,8 +18,9 @@ interface StatCardProps {
   label: string;
 }
 
-const Hero = () => {
+export default function Hero() {
   const [scrollY, setScrollY] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,116 +32,37 @@ const Hero = () => {
   }, []);
 
   return (
-    <Box position="relative" w="full" overflow="hidden">
-      {/* Background with parallax effect */}
-      <Box
-        position="absolute"
-        inset={0}
-        bgImage="url('https://images.pexels.com/photos/3738535/pexels-photo-3738535.jpeg?auto=compress&cs=tinysrgb&w=1600')"
-        bgSize="cover"
-        style={{
-          transform: `translateY(${scrollY * PARALLAX_FACTOR}px)`,
-          backgroundPosition: `center ${50 + scrollY * 0.05}%`,
-        }}
-      >
-        <Box
-          position="absolute"
-          inset={0}
-          bgGradient="linear(to-b, blackAlpha.700, blackAlpha.500, blackAlpha.950)"
-        />
-      </Box>
-
-      <Container maxW="container.xl" position="relative" px={4} py={{ base: 32, md: 40 }} zIndex={10}>
-        <Box maxW="3xl">
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Heading
-              fontSize={{ base: "4xl", md: "5xl", lg: "6xl" }}
-              fontWeight="bold"
-              color="white"
-              mb={6}
+    <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-green-50 to-white">
+      <div className="container px-4 md:px-6">
+        <div className="flex flex-col items-center space-y-4 text-center">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+              Join Local Cleanup Events
+            </h1>
+            <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+              Discover and participate in community cleanup events. Make a difference in your neighborhood.
+            </p>
+          </div>
+          <div className="space-x-4">
+            <Button 
+              size="lg"
+              onClick={() => router.push('/events')}
             >
-              Make Your Community
-              <Box as="span" display="block" color="green.400">
-                Bloom Again
-              </Box>
-            </Heading>
-          </MotionBox>
-
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <Text
-              fontSize={{ base: "lg", md: "xl" }}
-              color="whiteAlpha.900"
-              mb={8}
-              bgGradient="linear(to-r, green.400, teal.300)"
-              bgClip="text"
-              textShadow="lg"
-              _hover={{ transform: "scale(1.01)" }}
-              transition="all 0.3s ease"
+              Find Events
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={() => router.push('/auth/signup')}
             >
-              Join local cleanup events, connect with like-minded volunteers, and help restore
-              natural spaces in your neighborhood. Together, we can make a difference.
-            </Text>
-          </MotionBox>
-
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-          >
-            <Flex direction={{ base: "column", sm: "row" }} gap={4}>
-              <Link href="/events" passHref>
-                <Button as="span" size="lg" colorScheme="green">
-                  <Icon as={MapPin} />
-                  <Box w={2} as="span" />
-                  Find Events Near You
-                </Button>
-              </Link>
-              <Link href="/organize" passHref>
-                <Button
-                  as="span"
-                  size="lg"
-                  variant="outline"
-                  color="white"
-                  borderColor="white"
-                  _hover={{ bg: "whiteAlpha.100" }}
-                >
-                  <Icon as={ArrowRight} />
-                  <Box w={2} as="span" />
-                  Organize a Cleanup
-                </Button>
-              </Link>
-            </Flex>
-          </MotionBox>
-
-          {/* Stats */}
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-          >
-            <Flex direction={{ base: "column", sm: "row" }} gap={8} mt={16}>
-              <StatCard icon={Calendar} value="250+" label="Events This Month" />
-              <StatCard icon={Users} value="12,000+" label="Active Volunteers" />
-              <StatCard
-                icon={() => <Text fontSize="3xl" fontWeight="bold" color="green.400">#</Text>}
-                value="450 tons"
-                label="Waste Collected"
-              />
-            </Flex>
-          </MotionBox>
-        </Box>
-      </Container>
-    </Box>
+              Sign Up
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
-};
+}
 
 const StatCard = ({ icon, value, label }: StatCardProps) => (
   <Flex
@@ -157,5 +81,3 @@ const StatCard = ({ icon, value, label }: StatCardProps) => (
     <Text color="whiteAlpha.800" textAlign="center">{label}</Text>
   </Flex>
 );
-
-export default Hero;
