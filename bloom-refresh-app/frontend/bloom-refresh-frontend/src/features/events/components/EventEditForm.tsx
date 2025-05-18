@@ -30,7 +30,6 @@ export default function EventEditForm({ event, onSuccess }: { event: any, onSucc
   const [image, setImage] = useState(event.image || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
