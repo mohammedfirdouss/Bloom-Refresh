@@ -2,12 +2,14 @@
 
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, JWTManager
-import boto3 # For Cognito integration
-import os
+from flask_jwt_extended import (
+    create_access_token, create_refresh_token, jwt_required, get_jwt_identity, JWTManager
+)
 import structlog
+
 from .utils import hash_password, verify_password
-from datetime import datetime, UTC
+from config import config
+
 app = Flask(__name__)
 
 # Configuration
@@ -173,8 +175,8 @@ class TokenRefresh(Resource):
                     break
         
         if not user_exists:
-             logger.warn("auth.refresh.user_not_found", identity=current_user_identity)
-             return {"message": "User not found for token refresh"}, 404
+            logger.warn("auth.refresh.user_not_found", identity=current_user_identity)
+            return {"message": "User not found for token refresh"}, 404
 
         access_token = create_access_token(identity=current_user_identity)
         logger.info("auth.refresh.success", identity=current_user_identity)

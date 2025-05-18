@@ -8,11 +8,17 @@ import structlog
 from datetime import datetime, UTC
 import uuid # For generating reportId
 
+from config import config
+
 # from .models import ReportModel # Placeholder for PynamoDB or similar
 
 app = Flask(__name__)
 api = Api(app)
 logger = structlog.get_logger()
+
+# Example usage of the config module
+SECRET_KEY = config.SECRET_KEY
+DATABASE_URL = config.DATABASE_URL
 
 # In-memory data store for demonstration (replace with DynamoDB as per PRD)
 reports_db = {}

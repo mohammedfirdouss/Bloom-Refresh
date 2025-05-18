@@ -7,6 +7,7 @@ import structlog
 import boto3 # For SNS, SQS
 import json
 from datetime import datetime, UTC
+from config import config
 
 # from .models import NotificationModel # Placeholder for PynamoDB or similar
 
@@ -18,6 +19,10 @@ logger = structlog.get_logger()
 SNS_TOPIC_ARN_GENERAL = os.environ.get("SNS_TOPIC_ARN_GENERAL")
 SQS_QUEUE_URL_NOTIFICATIONS = os.environ.get("SQS_QUEUE_URL_NOTIFICATIONS")
 AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
+
+# Example usage of the config module
+SECRET_KEY = config.SECRET_KEY
+DATABASE_URL = config.DATABASE_URL
 
 # Initialize AWS clients (boto3)
 # sns_client = boto3.client("sns", region_name=AWS_REGION) # Uncomment when SNS is provisioned

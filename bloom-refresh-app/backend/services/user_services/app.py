@@ -6,11 +6,17 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager # To p
 import os
 import structlog
 from datetime import datetime, UTC
+from config import config
+
 # from .models import ProfileModel # Placeholder for PynamoDB or similar
 
 app = Flask(__name__)
 api = Api(app)
 logger = structlog.get_logger()
+
+# Example usage of the config module
+SECRET_KEY = config.SECRET_KEY
+DATABASE_URL = config.DATABASE_URL
 
 # In-memory user profiles store for demonstration (replace with DynamoDB as per PRD)
 # This will be replaced with DynamoDB for user profile data persistence.

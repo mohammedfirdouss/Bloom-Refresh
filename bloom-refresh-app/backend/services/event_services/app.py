@@ -7,6 +7,7 @@ import os
 import structlog
 from datetime import datetime, UTC
 import uuid # For generating eventId and rsvpId if not using database auto-increment
+from config import config
 
 # from .models import EventModel, RsvpModel # Placeholder for PynamoDB or similar
 
@@ -15,6 +16,10 @@ app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "super-secret-ke
 jwt = JWTManager(app)
 api = Api(app)
 logger = structlog.get_logger()
+
+# Example usage of the config module
+SECRET_KEY = config.SECRET_KEY
+DATABASE_URL = config.DATABASE_URL
 
 # In-memory data stores for demonstration (replace with DynamoDB as per PRD)
 events_db = {}
