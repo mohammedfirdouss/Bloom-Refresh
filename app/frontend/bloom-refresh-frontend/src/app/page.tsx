@@ -4,10 +4,11 @@ import { Box, Container, Heading, Text, SimpleGrid, Button, Flex, Link as Chakra
 import { useAuthStore } from "@/stores/auth/store";
 import apiClient from "@/api/client";
 import { EventsList } from "@/features/events/components";
-import Hero from "@/components/home/Hero";
-import CallToAction from "@/components/home/CallToAction";
-import HowItWorks from "@/components/home/HowItWorks";
-import ImpactStats from "@/components/home/ImpactStats";
+import Hero from '@/components/home/Hero';
+import FeaturedEvents from '@/components/home/featured-events';
+import HowItWorks from '@/components/home/how-it-works';
+import ImpactStats from '@/components/home/impact-stats';
+import CallToAction from '@/components/home/call-to-action';
 import Link from "next/link";
 
 export default function Home() {
@@ -36,79 +37,12 @@ export default function Home() {
   }, []);
 
   return (
-    <Box>
+    <div className="flex flex-col items-center">
       <Hero />
-
-      
-      
-      <Container maxW="container.xl" py={8} px={4}>
-        <Box mb={6} textAlign="center">
-          {isAuthenticated ? (
-            <Text color="green.700">Logged in as {user?.username}</Text>
-          ) : (
-            <Text color="gray.600">You are not logged in.</Text>
-          )}
-        </Box>
-
-        <Heading as="h2" size="xl" mb={4}>Featured Events</Heading>
-        {loading ? (
-          <Text>Loading events...</Text>
-        ) : events.length === 0 ? (
-          <Text>No featured events found.</Text>
-        ) : (
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={6} mb={8}>
-            {events.map((event) => (
-              <Box 
-                key={event.id}
-                borderWidth="1px"
-                borderRadius="xl"
-                overflow="hidden"
-                p={6}
-                bg="white"
-                shadow="xl"
-                _hover={{
-                  transform: 'translateY(-4px)',
-                  shadow: '2xl',
-                }}
-                transition="all 0.3s ease"
-                position="relative"
-              >
-                <Heading size="md" mb={2}>{event.name || event.eventName}</Heading>
-                <Text mb={2} color="gray.700">{event.description}</Text>
-                <Text mb={4} fontSize="sm" color="gray.500">{event.date}</Text>
-                <ChakraLink as={Link} href={`/events/${event.id}`} _hover={{ textDecoration: 'none' }}>
-                  <Button 
-                    colorScheme="green"
-                    width="full"
-                  >
-                    View Event
-                  </Button>
-                </ChakraLink>
-              </Box>
-            ))}
-          </SimpleGrid>
-        )}
-
-        <Flex justify="center" gap={4} mb={8}>
-          <ChakraLink as={Link} href="/events/browse" _hover={{ textDecoration: 'none' }}>
-            <Button variant="outline">
-              Browse All Events
-            </Button>
-          </ChakraLink>
-          <ChakraLink as={Link} href="/events/create" _hover={{ textDecoration: 'none' }}>
-            <Button variant="outline">
-              Create New Event
-            </Button>
-          </ChakraLink>
-        </Flex>
-
-        <Heading as="h2" size="xl" mb={4}>Upcoming Events</Heading>
-        <EventsList />
-      </Container>
-
-      <ImpactStats />
+      <FeaturedEvents />
       <HowItWorks />
+      <ImpactStats />
       <CallToAction />
-    </Box>
+    </div>
   );
 }
