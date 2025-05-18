@@ -11,3 +11,4 @@ flask-restful
 flask-jwt-extended
 boto3
 structlog
+python-dotenv==1.0.0

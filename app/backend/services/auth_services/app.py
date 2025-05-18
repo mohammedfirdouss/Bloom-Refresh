@@ -7,6 +7,7 @@ from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required, get_jwt_identity, JWTManager
 )
 import structlog
+import os
 
 from .utils import hash_password, verify_password
 from config import config
