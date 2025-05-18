@@ -1,22 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Box, Button, Container, Flex, Heading, Text, Icon } from "@chakra-ui/react";
-import { ArrowRight, MapPin, Calendar, Users } from "lucide-react";
-import Link from "next/link";
-import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useRouter } from "next/navigation";
-
-const PARALLAX_FACTOR = 0.2;
-
-const MotionBox = motion.create(Box);
-
-interface StatCardProps {
-  icon: React.ElementType;
-  value: string;
-  label: string;
-}
 
 export default function Hero() {
   const [scrollY, setScrollY] = useState(0);
@@ -44,40 +29,21 @@ export default function Hero() {
             </p>
           </div>
           <div className="space-x-4">
-            <Button 
-              size="lg"
+            <button
+              className="bg-green-500 text-white px-6 py-3 rounded text-lg font-semibold hover:bg-green-600 transition-colors"
               onClick={() => router.push('/events')}
             >
               Find Events
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
+            </button>
+            <button
+              className="border border-green-500 text-green-600 px-6 py-3 rounded text-lg font-semibold hover:bg-green-50 transition-colors"
               onClick={() => router.push('/auth/signup')}
             >
               Sign Up
-            </Button>
+            </button>
           </div>
         </div>
       </div>
     </section>
   );
 }
-
-const StatCard = ({ icon, value, label }: StatCardProps) => (
-  <Flex
-    direction="column"
-    align="center"
-    p={6}
-    bg="whiteAlpha.100"
-    backdropFilter="blur(8px)"
-    borderRadius="lg"
-    _hover={{ bg: "whiteAlpha.200" }}
-    transition="all 0.3s"
-    flex={1}
-  >
-    <Icon as={icon} w={8} h={8} color="green.400" mb={2} />
-    <Text fontSize="2xl" fontWeight="bold" color="white" mb={1}>{value}</Text>
-    <Text color="whiteAlpha.800" textAlign="center">{label}</Text>
-  </Flex>
-);

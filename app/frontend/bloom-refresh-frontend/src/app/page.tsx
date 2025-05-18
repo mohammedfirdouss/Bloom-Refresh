@@ -4,7 +4,7 @@ import { Box, Container, Heading, Text, SimpleGrid, Button, Flex, Link as Chakra
 import { useAuthStore } from "@/stores/auth/store";
 import apiClient from "@/api/client";
 import { EventsList } from "@/features/events/components";
-import Hero from '@/components/home/Hero';
+import Hero from '@/components/home/hero';
 import FeaturedEvents from '@/components/home/featured-events';
 import HowItWorks from '@/components/home/how-it-works';
 import ImpactStats from '@/components/home/impact-stats';
