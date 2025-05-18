@@ -1,46 +1,42 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Providers } from "./providers";
-import Header from "@/components/common/layout/Header";
-import Footer from "@/components/common/layout/Footer";
-import { Toaster } from "sonner";
+import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const inter = Inter({ 
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
-  title: "Bloom Refresh",
-  description: "Organize and participate in local cleanup events.",
+  title: 'Bloom Refresh | Join Local Cleanup Events',
+  description: 'Discover and join local cleanup events, track your impact, and help refresh your community.',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" className="h-full">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#ffffff" />
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-full flex flex-col`}>
-        <Providers>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
+        <ThemeProvider 
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+        >
           <Header />
           <main className="flex-grow">
             {children}
           </main>
           <Footer />
-          <Toaster position="top-right" richColors />
-        </Providers>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
