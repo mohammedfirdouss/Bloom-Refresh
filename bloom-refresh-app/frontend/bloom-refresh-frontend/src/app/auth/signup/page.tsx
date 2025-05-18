@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth/store';
 import { toast } from 'sonner';
+import { Box, Text, Button } from '@chakra-ui/react';
 
 const schema = yup.object({
   username: yup.string().required('Username is required'),
@@ -31,18 +32,36 @@ export default function SignupPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<SignupFormData>({
     resolver: yupResolver(schema)
   });
+  const [showVerify, setShowVerify] = useState(false);
+  const [email, setEmail] = useState('');
 
   const onSubmit = async (data: SignupFormData) => {
     try {
       await signupUser(data);
       toast.success('Account created successfully!');
       router.push('/auth/login');
+      setShowVerify(true);
+      setEmail(data.email);
     } catch (err) {
       // prefer error coming directly from the thrown value or store *after* update
       const storeError = typeof err === 'string' ? err : (err as Error)?.message;
       toast.error(storeError || 'Signup failed. Please try again.');
     }
   };
+
+  const handleResend = () => {
+    // TODO: Call API to resend verification email
+    alert('Verification email resent!');
+  };
+
+  if (showVerify) {
+    return (
+      <Box p={8}>
+        <Text>A verification email has been sent to {email}. Please check your inbox.</Text>
+        <Button mt={4} onClick={handleResend}>Resend Verification Email</Button>
+      </Box>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-8">
