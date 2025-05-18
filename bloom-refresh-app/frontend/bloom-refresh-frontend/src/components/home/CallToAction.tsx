@@ -9,7 +9,13 @@ const MotionBox = motion(Box);
 
 const CallToAction = () => {
   return (
-    <Box bg="green.50" py={20}>
+    <Box 
+  bg="green.50" 
+  py={20}
+  bgGradient="linear(to-b, green.50, white)"
+  borderTopWidth="1px"
+  borderColor="green.100"
+>
       <Container maxW="container.xl">
         <Flex 
           direction={{ base: 'column', md: 'row' }}

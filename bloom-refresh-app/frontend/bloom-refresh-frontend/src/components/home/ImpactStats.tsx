@@ -11,7 +11,8 @@ const stats = [
     icon: Users,
     value: '12,000+',
     label: 'Active Volunteers',
-    helpText: 'Growing community of environmental champions'
+    helpText: 'Growing community of environmental champions',
+    gradient: 'linear(to-r, green.400, green.600)'
   },
   {
     icon: Calendar,

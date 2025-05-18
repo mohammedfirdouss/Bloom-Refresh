@@ -75,6 +75,11 @@ const Hero = () => {
               fontSize={{ base: "lg", md: "xl" }}
               color="whiteAlpha.900"
               mb={8}
+              bgGradient="linear(to-r, green.400, teal.300)"
+              bgClip="text"
+              textShadow="lg"
+              _hover={{ transform: 'scale(1.01)' }}
+              transition="all 0.3s ease"
             >
               Join local cleanup events, connect with like-minded volunteers, and help 
               restore natural spaces in your neighborhood. Together, we can make a difference.

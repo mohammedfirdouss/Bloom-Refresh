@@ -61,11 +61,17 @@ export default function Home() {
               <Box 
                 key={event.id}
                 borderWidth="1px"
-                borderRadius="lg"
+                borderRadius="xl"
                 overflow="hidden"
-                p={4}
+                p={6}
                 bg="white"
-                shadow="md"
+                shadow="xl"
+                _hover={{
+                  transform: 'translateY(-4px)',
+                  shadow: '2xl',
+                }}
+                transition="all 0.3s ease"
+                position="relative"
               >
                 <Heading size="md" mb={2}>{event.name || event.eventName}</Heading>
                 <Text mb={2} color="gray.700">{event.description}</Text>
