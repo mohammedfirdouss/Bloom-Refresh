@@ -1,6 +1,27 @@
 import { useState } from 'react';
 import { Box, Input, Button, Textarea, Image } from '@chakra-ui/react';
 
+async function uploadImageToS3(file: File): Promise<string> {
+  // 1. Get presigned URL from your backend
+  const res = await fetch('/api/upload-url', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+  });
+  const { uploadUrl, fileUrl } = await res.json();
+
+  // 2. Upload file directly to S3
+  const uploadRes = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': file.type },
+    body: file,
+  });
+
+  if (!uploadRes.ok) throw new Error('S3 upload failed');
+  // 3. Return the S3 file URL
+  return fileUrl;
+}
+
 export default function EventEditForm({ event, onSuccess }: { event: any, onSuccess: () => void }) {
   const [title, setTitle] = useState(event.title || '');
   const [description, setDescription] = useState(event.description || '');
@@ -8,6 +29,7 @@ export default function EventEditForm({ event, onSuccess }: { event: any, onSucc
   const [status, setStatus] = useState(event.status || 'upcoming');
   const [image, setImage] = useState(event.image || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -18,8 +40,19 @@ export default function EventEditForm({ event, onSuccess }: { event: any, onSucc
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Upload image to S3/Cloudinary if imageFile is set
-    // TODO: Call API to update event
+    let imageUrl = image;
+    if (imageFile) {
+      setUploading(true);
+      try {
+        imageUrl = await uploadImageToS3(imageFile);
+      } catch (err) {
+        alert('Image upload failed');
+        setUploading(false);
+        return;
+      }
+      setUploading(false);
+    }
+    // TODO: Call API to update event with imageUrl
     alert('Event updated!');
     onSuccess();
   };
@@ -51,7 +84,7 @@ export default function EventEditForm({ event, onSuccess }: { event: any, onSucc
         <Input type="file" accept="image/*" onChange={handleImageChange} />
         {image && <Image src={image} alt="Event" boxSize="120px" mt={2} />}
       </Box>
-      <Button colorScheme="green" type="submit">Save Changes</Button>
+      <Button colorScheme="green" type="submit" loading={uploading}>Save Changes</Button>
     </form>
   );
 } 
