@@ -6,3 +6,8 @@ structlog==24.1.0
 werkzeug==3.0.1
 pynamodb==6.0.2
 requests==2.31.0
+flask
+flask-restful
+flask-jwt-extended
+boto3
+structlog
