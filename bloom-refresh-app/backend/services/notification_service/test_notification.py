@@ -1,37 +1,31 @@
 """Test script for notification service endpoints."""
 
-import requests
+import pytest
+from flask import Flask
+from unittest.mock import patch
+from app import app  # Import the Flask app from the notification service
 
-BASE_URL = "http://localhost:5005"  # Change port if notification_service runs on a different port
+@pytest.fixture
+def client():
+    with app.test_client() as client:
+        yield client
 
-def test_health():
-    """Test health endpoint."""
-    url = f"{BASE_URL}/notifications/health"
-    response = requests.get(url)
-    print("\nHealth Check Response:", response.status_code)
-    try:
-        print(response.json())
-    except Exception:
-        print("Raw response:", response.text)
+@patch("app.some_external_dependency")  # Mock external dependencies
+def test_health(mock_dependency, client):
+    mock_dependency.return_value = True  # Mock behavior
+    response = client.get("/notifications/health")
+    assert response.status_code == 200
+    assert response.json["status"] == "Notification service is healthy"
 
-def test_send_notification():
-    """Test sending an adhoc notification."""
-    url = f"{BASE_URL}/notifications/send"
-    data = {
+@patch("app.some_external_dependency")
+def test_send_notification(mock_dependency, client):
+    mock_dependency.return_value = True
+    response = client.post("/notifications/send", json={
         "userId": "user123",
         "subject": "Test Notification",
         "message": "This is a test notification.",
         "type": "adhoc",
-        "eventId": "event123"  # Optional
-    }
-    response = requests.post(url, json=data)
-    print("\nSend Notification Response:", response.status_code)
-    try:
-        print(response.json())
-    except Exception:
-        print("Raw response:", response.text)
-
-if __name__ == "__main__":
-    print("Testing Notification Service Endpoints...")
-    test_health()
-    test_send_notification()
+        "eventId": "event123"
+    })
+    assert response.status_code == 202
+    assert response.json["message"] == "Adhoc notification processed"

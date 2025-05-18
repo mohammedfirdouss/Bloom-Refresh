@@ -1,52 +1,47 @@
 """Test script for auth service endpoints."""
 
-import requests
-import json
+import pytest
+from flask import Flask
+from unittest.mock import patch
+from app import app  # Import the Flask app from the auth service
 
-BASE_URL = "http://localhost:5001"
+@pytest.fixture
+def client():
+    with app.test_client() as client:
+        yield client
 
-def test_signup():
-    """Test user signup."""
-    url = f"{BASE_URL}/auth/signup"
-    data = {
+@patch("app.some_external_dependency")  # Mock external dependencies
+def test_signup(mock_dependency, client):
+    mock_dependency.return_value = True  # Mock behavior
+    response = client.post("/auth/signup", json={
         "email": "test@example.com",
         "password": "testpass123",
         "role": "volunteer"
-    }
-    response = requests.post(url, json=data)
-    print("\nSignup Response:", response.status_code)
-    print(response.json())
+    })
+    assert response.status_code == 201
+    assert response.json["message"] == "User signed up successfully."
 
-def test_login():
-    """Test user login."""
-    url = f"{BASE_URL}/auth/login"
-    data = {
+@patch("app.some_external_dependency")
+def test_login(mock_dependency, client):
+    mock_dependency.return_value = True
+    response = client.post("/auth/login", json={
         "email": "test@example.com",
         "password": "testpass123"
-    }
-    response = requests.post(url, json=data)
-    print("\nLogin Response:", response.status_code)
-    print(response.json())
-    return response.json().get("access_token"), response.json().get("refresh_token")
+    })
+    assert response.status_code == 200
+    assert "access_token" in response.json
+    assert "refresh_token" in response.json
 
-def test_refresh_token(refresh_token):
-    """Test token refresh."""
-    url = f"{BASE_URL}/auth/refresh"
-    headers = {"Authorization": f"Bearer {refresh_token}"}
-    response = requests.post(url, headers=headers)
-    print("\nRefresh Token Response:", response.status_code)
-    print(response.json())
+@patch("app.some_external_dependency")
+def test_refresh_token(mock_dependency, client):
+    mock_dependency.return_value = True
+    response = client.post("/auth/refresh", headers={
+        "Authorization": "Bearer some_refresh_token"
+    })
+    assert response.status_code == 200
+    assert "access_token" in response.json
 
-def test_health():
-    """Test health endpoint."""
-    url = f"{BASE_URL}/auth/health"
-    response = requests.get(url)
-    print("\nHealth Check Response:", response.status_code)
-    print(response.json())
-
-if __name__ == "__main__":
-    print("Testing Auth Service Endpoints...")
-    test_health()
-    test_signup()
-    access_token, refresh_token = test_login()
-    test_refresh_token(refresh_token) 
+def test_health(client):
+    response = client.get("/auth/health")
+    assert response.status_code == 200
+    assert response.json["status"] == "Auth service is healthy"

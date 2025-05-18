@@ -1,34 +1,26 @@
 """Test script for reporting service endpoints."""
 
-import requests
+import pytest
+from flask import Flask
+from unittest.mock import patch
+from app import app  # Import the Flask app from the reporting service
 
-BASE_URL = "http://localhost:5004"  # Change port if reporting service runs on a different port
-AUTH_URL = "http://localhost:5001"  # Auth service URL
+@pytest.fixture
+def client():
+    with app.test_client() as client:
+        yield client
 
-def get_access_token():
-    """Get JWT access token from auth service."""
-    url = f"{AUTH_URL}/auth/login"
-    data = {
-        "email": "test@example.com",
-        "password": "testpass123"
-    }
-    response = requests.post(url, json=data)
-    if response.status_code == 200:
-        return response.json().get("access_token")
-    print("Failed to get access token:", response.status_code, response.text)
-    return None
+@patch("app.some_external_dependency")  # Mock external dependencies
+def test_health(mock_dependency, client):
+    mock_dependency.return_value = True  # Mock behavior
+    response = client.get("/reports/health")
+    assert response.status_code == 200
+    assert response.json["status"] == "Reporting service is healthy"
 
-def test_health():
-    """Test health endpoint."""
-    url = f"{BASE_URL}/reports/health"
-    response = requests.get(url)
-    print("\nHealth Check Response:", response.status_code)
-    print(response.json())
-
-def test_submit_report(token, event_id="event123"):
-    """Test submitting an event report."""
-    url = f"{BASE_URL}/events/{event_id}/report"
-    data = {
+@patch("app.some_external_dependency")
+def test_submit_report(mock_dependency, client):
+    mock_dependency.return_value = True
+    response = client.post("/events/event123/report", json={
         "bagsCollected": 10,
         "photoUrls": [
             "https://s3-url-1",
@@ -37,29 +29,14 @@ def test_submit_report(token, event_id="event123"):
         "otherMetrics": {
             "additionalField": "value"
         }
-    }
-    headers = {"Authorization": f"Bearer {token}"}
-    response = requests.post(url, json=data, headers=headers)
-    print("\nSubmit Report Response:", response.status_code)
-    try:
-        print(response.json())
-    except Exception:
-        print("Raw response:", response.text)
-    return response.json().get("reportId")
+    }, headers={"Authorization": "Bearer some_access_token"})
+    assert response.status_code == 201
+    assert "reportId" in response.json
 
-def test_get_report(report_id, token):
-    """Test get report by ID."""
-    url = f"{BASE_URL}/reports/{report_id}"
-    headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(url, headers=headers)
-    print("\nGet Report Response:", response.status_code)
-    print(response.json())
-
-if __name__ == "__main__":
-    print("Testing Reporting Service Endpoints...")
-    test_health()
-    access_token = get_access_token()
-    if access_token:
-        report_id = test_submit_report(access_token)
-        if report_id:
-            test_get_report(report_id, access_token)
+@patch("app.some_external_dependency")
+def test_get_report(mock_dependency, client):
+    mock_dependency.return_value = True
+    response = client.get("/reports/some_report_id", headers={"Authorization": "Bearer some_access_token"})
+    assert response.status_code == 200
+    assert "bagsCollected" in response.json
+    assert response.json["bagsCollected"] == 10

@@ -1,34 +1,26 @@
 """Test script for event service endpoints."""
 
-import requests
+import pytest
+from flask import Flask
+from unittest.mock import patch
+from app import app  # Import the Flask app from the event service
 
-BASE_URL = "http://localhost:5003"  # Change port if event service runs on a different port
-AUTH_URL = "http://localhost:5001"  # Auth service URL
+@pytest.fixture
+def client():
+    with app.test_client() as client:
+        yield client
 
-def get_access_token():
-    """Get JWT access token from auth service."""
-    url = f"{AUTH_URL}/auth/login"
-    data = {
-        "email": "test@example.com",
-        "password": "testpass123"
-    }
-    response = requests.post(url, json=data)
-    if response.status_code == 200:
-        return response.json().get("access_token")
-    print("Failed to get access token:", response.status_code, response.text)
-    return None
+@patch("app.some_external_dependency")  # Mock external dependencies
+def test_health(mock_dependency, client):
+    mock_dependency.return_value = True  # Mock behavior
+    response = client.get("/events/health")
+    assert response.status_code == 200
+    assert response.json["status"] == "Event service is healthy"
 
-def test_health():
-    """Test health endpoint."""
-    url = f"{BASE_URL}/events/health"
-    response = requests.get(url)
-    print("\nHealth Check Response:", response.status_code)
-    print(response.json())
-
-def test_create_event(token):
-    """Test event creation."""
-    url = f"{BASE_URL}/events"
-    data = {
+@patch("app.some_external_dependency")
+def test_create_event(mock_dependency, client):
+    mock_dependency.return_value = True
+    response = client.post("/events", json={
         "title": "Beach Cleanup",
         "location": {
             "latitude": 34.0522,
@@ -38,29 +30,14 @@ def test_create_event(token):
         "dateTime": "2025-07-15T09:00:00Z",
         "capacity": 50,
         "supplies": "Gloves and bags provided"
-    }
-    headers = {"Authorization": f"Bearer {token}"}
-    response = requests.post(url, json=data, headers=headers)
-    print("\nCreate Event Response:", response.status_code)
-    try:
-        print(response.json())
-    except Exception:
-        print("Raw response:", response.text)
-    return response.json().get("eventId")
+    }, headers={"Authorization": "Bearer some_access_token"})
+    assert response.status_code == 201
+    assert "eventId" in response.json
 
-def test_get_event(event_id, token):
-    """Test get event by ID."""
-    url = f"{BASE_URL}/events/{event_id}"
-    headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(url, headers=headers)
-    print("\nGet Event Response:", response.status_code)
-    print(response.json())
-
-if __name__ == "__main__":
-    print("Testing Event Service Endpoints...")
-    test_health()
-    access_token = get_access_token()
-    if access_token:
-        event_id = test_create_event(access_token)
-        if event_id:
-            test_get_event(event_id, access_token)
+@patch("app.some_external_dependency")
+def test_get_event(mock_dependency, client):
+    mock_dependency.return_value = True
+    response = client.get("/events/some_event_id", headers={"Authorization": "Bearer some_access_token"})
+    assert response.status_code == 200
+    assert "title" in response.json
+    assert response.json["title"] == "Beach Cleanup"
