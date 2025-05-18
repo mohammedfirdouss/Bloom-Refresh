@@ -1,77 +1,184 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+"use client"
 
-export default function FeaturedEvents() {
-  const router = useRouter();
-  const events = [
-    {
-      id: 1,
-      title: "Beach Cleanup",
-      date: "2024-03-15",
-      location: "Santa Monica Beach",
-      description: "Join us for a beach cleanup event to help keep our shores clean.",
-      spots: 25,
-    },
-    {
-      id: 2,
-      title: "Park Restoration",
-      date: "2024-03-20",
-      location: "Central Park",
-      description: "Help restore our local park by planting trees and cleaning up litter.",
-      spots: 15,
-    },
-    {
-      id: 3,
-      title: "River Cleanup",
-      date: "2024-03-25",
-      location: "River Walk",
-      description: "Clean up the river banks and help maintain our water ecosystem.",
-      spots: 20,
-    },
-  ];
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { 
+  CalendarDays, 
+  MapPin, 
+  Users, 
+  Clock, 
+  ChevronLeft, 
+  ChevronRight 
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { featuredEvents } from '@/lib/mock-data';
+
+const FeaturedEvents = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    
+    const element = document.getElementById('featured-events');
+    if (element) observer.observe(element);
+    
+    return () => {
+      if (element) observer.unobserve(element);
+    };
+  }, []);
+
+  const nextSlide = () => {
+    setActiveIndex((current) => (current === featuredEvents.length - 1 ? 0 : current + 1));
+  };
+
+  const prevSlide = () => {
+    setActiveIndex((current) => (current === 0 ? featuredEvents.length - 1 : current - 1));
+  };
 
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-              Featured Events
-            </h2>
-            <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-              Join our upcoming community cleanup events
+    <section 
+      id="featured-events" 
+      className="py-20 bg-background"
+    >
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+          <div className={cn(
+            "transition-all duration-1000 transform",
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          )}>
+            <h2 className="text-3xl font-bold mb-2">Featured Cleanup Events</h2>
+            <p className="text-muted-foreground max-w-2xl">
+              Join these upcoming events happening in your area and make a positive impact on your local environment.
             </p>
           </div>
+          <div className={cn(
+            "flex gap-2 transition-all duration-1000 delay-300 transform mt-4 md:mt-0",
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          )}>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={prevSlide}
+              className="hover:bg-green-100 dark:hover:bg-green-900/20"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={nextSlide}
+              className="hover:bg-green-100 dark:hover:bg-green-900/20"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+            <Button variant="default" className="ml-2 bg-green-500 hover:bg-green-600 text-white">
+              <Link href="/events">View All Events</Link>
+            </Button>
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {events.map((event) => (
-            <Card key={event.id}>
-              <CardHeader>
-                <CardTitle>{event.title}</CardTitle>
-                <CardDescription>{event.location}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {event.description}
-                </p>
-                <div className="mt-4">
-                  <p className="text-sm font-medium">Date: {event.date}</p>
-                  <p className="text-sm font-medium">Available Spots: {event.spots}</p>
+        
+        <div className="relative overflow-hidden">
+          <div 
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+          >
+            {featuredEvents.map((event, index) => (
+              <div key={event.id} className="w-full flex-shrink-0 px-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {event.locations.map((location, locIndex) => (
+                    <Card key={locIndex} className={cn(
+                      "group hover:shadow-lg transition-all duration-300 overflow-hidden",
+                      isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
+                      "transition-all duration-1000",
+                      { "delay-500": locIndex === 0, "delay-700": locIndex === 1, "delay-900": locIndex === 2 }
+                    )}>
+                      <div 
+                        className="h-48 bg-cover bg-center relative group-hover:scale-105 transition-transform duration-500"
+                        style={{ backgroundImage: `url(${location.image})` }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <div className="absolute bottom-4 left-4">
+                          <Badge className="bg-green-500 hover:bg-green-600">{location.category}</Badge>
+                        </div>
+                      </div>
+                      <CardHeader className="relative pt-6">
+                        <h3 className="text-xl font-bold group-hover:text-green-500 transition-colors duration-300">
+                          {location.title}
+                        </h3>
+                        <div className="flex items-center text-muted-foreground text-sm mt-2">
+                          <MapPin className="h-4 w-4 mr-1 text-green-500" />
+                          <span>{location.area}</span>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-col gap-3 text-sm">
+                          <div className="flex items-start">
+                            <CalendarDays className="h-4 w-4 mr-2 text-green-500 mt-1" />
+                            <div>
+                              <div className="font-medium">Date & Time</div>
+                              <div className="text-muted-foreground">{location.date} • {location.time}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-start">
+                            <Clock className="h-4 w-4 mr-2 text-green-500 mt-1" />
+                            <div>
+                              <div className="font-medium">Duration</div>
+                              <div className="text-muted-foreground">{location.duration}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-start">
+                            <Users className="h-4 w-4 mr-2 text-green-500 mt-1" />
+                            <div>
+                              <div className="font-medium">Participants</div>
+                              <div className="text-muted-foreground">{location.signedUp} signed up ({location.capacity - location.signedUp} spots left)</div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <Button className="w-full bg-green-500 hover:bg-green-600 text-white">
+                          <Link href={`/events/${event.id}/${locIndex}`} className="w-full">
+                            Register Now
+                          </Link>
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
                 </div>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  className="w-full"
-                  onClick={() => router.push(`/events/${event.id}`)}
-                >
-                  Join Event
-                </Button>
-              </CardFooter>
-            </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="flex justify-center mt-8">
+          {featuredEvents.map((_, index) => (
+            <Button
+              key={index}
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "w-2 h-2 rounded-full p-0 mx-1", 
+                { 
+                  "bg-green-500": index === activeIndex,
+                  "bg-muted": index !== activeIndex 
+                }
+              )}
+              onClick={() => setActiveIndex(index)}
+            />
           ))}
         </div>
       </div>
     </section>
   );
-} 
+};
+
+export default FeaturedEvents;
