@@ -6,7 +6,7 @@ import { refreshTokenIfNeeded } from '@/lib/tokenRefresh';
 interface User {
   id: string;
   username: string;
-  role: 'volunteer' | 'organizer';
+  role: 'volunteer' | 'organizer' | 'admin';
   // Add other user properties as needed from backend response
 }
 
