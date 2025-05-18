@@ -112,5 +112,59 @@ export const featuredEvents = [
         image: "https://images.pexels.com/photos/1141853/pexels-photo-1141853.jpeg?auto=compress&cs=tinysrgb&w=1600"
       }
     ]
+  },
+  {
+    id: "summer-wetlands-restoration",
+    locations: [
+      {
+        title: "Everglades Restoration Project",
+        area: "Everglades National Park, Florida",
+        date: "July 12, 2025",
+        time: "7:00 AM",
+        duration: "6 hours",
+        signedUp: 38,
+        capacity: 50,
+        category: "Wetland Restoration",
+        image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1600"
+      },
+      {
+        title: "Great Salt Lake Cleanup",
+        area: "Great Salt Lake, Utah",
+        date: "July 13, 2025",
+        time: "8:00 AM",
+        duration: "4 hours",
+        signedUp: 42,
+        capacity: 60,
+        category: "Lake Cleanup",
+        image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1600"
+      }
+    ]
+  },
+  {
+    id: "urban-greening-initiative",
+    locations: [
+      {
+        title: "Downtown Tree Planting",
+        area: "Financial District, Boston",
+        date: "August 5, 2025",
+        time: "9:00 AM",
+        duration: "3 hours",
+        signedUp: 25,
+        capacity: 35,
+        category: "Urban Greening",
+        image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1600"
+      },
+      {
+        title: "Community Garden Expansion",
+        area: "Brooklyn Community Garden, New York",
+        date: "August 6, 2025",
+        time: "10:00 AM",
+        duration: "4 hours",
+        signedUp: 18,
+        capacity: 30,
+        category: "Urban Farming",
+        image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1600"
+      }
+    ]
   }
 ]; 
