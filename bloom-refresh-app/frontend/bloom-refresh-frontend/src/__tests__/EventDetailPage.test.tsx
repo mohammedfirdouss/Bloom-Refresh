@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import EventDetailPage from '@/app/events/[id]/page';
@@ -18,7 +19,7 @@ jest.mock('@/stores/authStore', () => ({
 }));
 
 // Mock the API client
-jest.mock('@/lib/apiClient', () => ({
+jest.mock('@/api/client', () => ({
   getEventById: jest.fn(),
   checkRsvpStatus: jest.fn(),
   rsvpToEvent: jest.fn(),
@@ -45,17 +46,11 @@ describe('EventDetailPage Component', () => {
     },
   });
   
-  let mockRouter;
+  const mockRouter = {
+    push: jest.fn(),
+    back: jest.fn(),
+  };
 
-  beforeEach(() => {
-    // Reset mocks and setup fresh objects
-    jest.clearAllMocks();
-    
-    mockRouter = {
-      push: jest.fn(),
-      back: jest.fn(),
-    };
-  
   const mockEvent = {
     id: '123',
     name: 'Test Event',
@@ -76,14 +71,14 @@ describe('EventDetailPage Component', () => {
     jest.clearAllMocks();
     
     // Setup default mocks
-    useRouter.mockReturnValue(mockRouter);
-    useParams.mockReturnValue({ id: '123' });
-    useAuthStore.mockReturnValue({
+    (useRouter as jest.Mock).mockReturnValue(mockRouter);
+    (useParams as jest.Mock).mockReturnValue({ id: '123' });
+    (useAuthStore as jest.Mock).mockReturnValue({
       isAuthenticated: true,
       user: { id: 'user123', name: 'Test User' },
     });
-    apiClient.getEventById.mockResolvedValue(mockEvent);
-    apiClient.checkRsvpStatus.mockResolvedValue({ hasRsvped: false });
+    (apiClient.getEventById as jest.Mock).mockResolvedValue(mockEvent);
+    (apiClient.checkRsvpStatus as jest.Mock).mockResolvedValue({ hasRsvped: false });
   });
   
   test('renders loading state initially', () => {
@@ -121,7 +116,7 @@ describe('EventDetailPage Component', () => {
   
   test('renders error state when event not found', async () => {
     // Mock API error
-    apiClient.getEventById.mockRejectedValue(new Error('Event not found'));
+    (apiClient.getEventById as jest.Mock).mockRejectedValue(new Error('Event not found'));
     
     render(
       <QueryClientProvider client={queryClient}>
@@ -140,7 +135,7 @@ describe('EventDetailPage Component', () => {
   
   test('shows withdraw button when user has already RSVPed', async () => {
     // Mock user has already RSVPed
-    apiClient.checkRsvpStatus.mockResolvedValue({ hasRsvped: true });
+    (apiClient.checkRsvpStatus as jest.Mock).mockResolvedValue({ hasRsvped: true });
     
     render(
       <QueryClientProvider client={queryClient}>
@@ -160,7 +155,7 @@ describe('EventDetailPage Component', () => {
   
   test('redirects to login when unauthenticated user tries to RSVP', async () => {
     // Mock unauthenticated user
-    useAuthStore.mockReturnValue({
+    (useAuthStore as jest.Mock).mockReturnValue({
       isAuthenticated: false,
       user: null,
     });

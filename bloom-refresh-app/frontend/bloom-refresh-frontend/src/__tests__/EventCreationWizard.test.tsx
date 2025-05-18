@@ -1,12 +1,13 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import EventCreationWizard from '@/features/events/components/EventCreationWizard';
 import { toast } from 'sonner';
 import apiClient from '@/api/client';
 
 // Mock the API client
-jest.mock('@/lib/apiClient', () => ({
+jest.mock('@/api/client', () => ({
   createEvent: jest.fn(),
 }));
 
@@ -78,7 +79,7 @@ describe('EventCreationWizard Component', () => {
   
   test('submits form data correctly when valid', async () => {
     // Mock successful API response
-    apiClient.createEvent.mockResolvedValue({ id: '123', name: 'Test Event' });
+    (apiClient.createEvent as jest.Mock).mockResolvedValue({ id: '123', name: 'Test Event' });
     
     render(
       <QueryClientProvider client={queryClient}>
@@ -107,13 +108,13 @@ describe('EventCreationWizard Component', () => {
     
     // Check if success toast was displayed
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalled();
+      expect(toast.success).toHaveBeenCalled();
     });
   });
   
   test('handles API errors correctly', async () => {
     // Mock API error
-    apiClient.createEvent.mockRejectedValue(new Error('API Error'));
+    (apiClient.createEvent as jest.Mock).mockRejectedValue(new Error('API Error'));
     
     render(
       <QueryClientProvider client={queryClient}>

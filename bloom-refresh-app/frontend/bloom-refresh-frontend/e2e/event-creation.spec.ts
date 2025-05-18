@@ -1,12 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 test.describe('Event Creation Flow', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }: { page: Page }) => {
     // TODO: Set up test user session
     await page.goto('/');
   });
 
-  test('should create a new event', async ({ page }) => {
+  test('should create a new event', async ({ page }: { page: Page }) => {
     // Navigate to event creation
     await page.click('text=Create Event');
     
