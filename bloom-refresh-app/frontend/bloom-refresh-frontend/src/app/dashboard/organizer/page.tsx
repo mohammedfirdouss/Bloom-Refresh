@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { useAuthStore } from '@/stores/auth/store';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/api/client';
 import { toast } from 'sonner';
+import { Box } from '@chakra-ui/react';
 
 interface Event {
   id: string;
@@ -37,7 +38,7 @@ interface Report {
   photoUrls?: string[];
 }
 
-const EventCard = ({ event }: { event: Event }) => (
+const EventCard = ({ event, onEdit, onDelete }: { event: Event, onEdit: (id: string) => void, onDelete: (event: Event) => void }) => (
   <Card className="h-full flex flex-col">
     <CardHeader>
       <CardTitle className="text-xl">{event.name}</CardTitle>
@@ -58,13 +59,12 @@ const EventCard = ({ event }: { event: Event }) => (
         </div>
       </div>
     </CardContent>
-    <CardFooter className="flex justify-between">
-      <Link href={`/events/${event.id}`} className="flex-1 mr-2">
+    <CardFooter className="flex gap-2">
+      <Link href={`/events/${event.id}`} className="flex-1">
         <Button variant="outline" className="w-full">View</Button>
       </Link>
-      <Link href={`/events/${event.id}/edit`} className="flex-1">
-        <Button variant="outline" className="w-full">Edit</Button>
-      </Link>
+      <Button variant="outline" className="flex-1" onClick={() => onEdit(event.id)}>Edit</Button>
+      <Button style={{ background: '#f56565', color: 'white' }} variant="outline" className="flex-1" onClick={() => onDelete(event)}>Delete</Button>
     </CardFooter>
   </Card>
 );
@@ -103,6 +103,8 @@ const OrganizerDashboardPage = () => {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
   const [activeTab, setActiveTab] = React.useState('active');
+  const [deleteEvent, setDeleteEvent] = useState<Event | null>(null);
+  const cancelRef = useRef(null);
 
   React.useEffect(() => {
     // Redirect to login if not authenticated
@@ -170,6 +172,19 @@ const OrganizerDashboardPage = () => {
   if (pastError) handleError(pastError);
   if (reportsError) handleError(reportsError);
 
+  // Add this function to handle delete
+  const handleDelete = async () => {
+    if (!deleteEvent) return;
+    try {
+      // TODO: Call API to delete event
+      toast.success('Event deleted!');
+      setDeleteEvent(null);
+      // Optionally refetch events here
+    } catch (err) {
+      toast.error('Failed to delete event');
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-6">
@@ -192,7 +207,7 @@ const OrganizerDashboardPage = () => {
           ) : activeEvents && activeEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeEvents.map(event => (
-                <EventCard key={event.id} event={event} />
+                <EventCard key={event.id} event={event} onEdit={id => router.push(`/events/edit?id=${id}`)} onDelete={setDeleteEvent} />
               ))}
             </div>
           ) : (
@@ -212,7 +227,7 @@ const OrganizerDashboardPage = () => {
           ) : pastEvents && pastEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {pastEvents.map(event => (
-                <EventCard key={event.id} event={event} />
+                <EventCard key={event.id} event={event} onEdit={id => router.push(`/events/edit?id=${id}`)} onDelete={setDeleteEvent} />
               ))}
             </div>
           ) : (
@@ -240,6 +255,24 @@ const OrganizerDashboardPage = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Custom Delete Confirmation Dialog */}
+      {!!deleteEvent && (
+        <Box position="fixed" top={0} left={0} w="100vw" h="100vh" bg="blackAlpha.600" zIndex={1000} display="flex" alignItems="center" justifyContent="center">
+          <Box bg="white" p={6} borderRadius="md" boxShadow="lg" minW="320px">
+            <h2 className="text-lg font-bold mb-4">Delete Event</h2>
+            <p className="mb-6">Are you sure you want to delete the event "{deleteEvent?.name}"? This action cannot be undone.</p>
+            <div className="flex justify-end gap-2">
+              <Button onClick={() => setDeleteEvent(null)}>
+                Cancel
+              </Button>
+              <Button style={{ background: '#f56565', color: 'white' }} onClick={handleDelete}>
+                Delete
+              </Button>
+            </div>
+          </Box>
+        </Box>
+      )}
     </div>
   );
 };
