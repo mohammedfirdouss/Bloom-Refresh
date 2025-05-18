@@ -1,81 +1,123 @@
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { Leaf, Mail, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
-export default function Footer() {
+const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12">
-      <div className="container mx-auto px-4">
+    <footer className="bg-background border-t">
+      <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Bloom Refresh</h3>
-            <p className="text-gray-400">
-              Making our communities cleaner, one event at a time.
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 font-bold text-xl">
+              <Leaf className="h-6 w-6 text-green-500" />
+              <span>Bloom Refresh</span>
+            </Link>
+            <p className="text-muted-foreground">
+              Connecting communities for cleaner, greener environments through local cleanup events.
             </p>
+            <div className="flex space-x-4">
+              <Button variant="ghost" size="icon" aria-label="Facebook" className="hover:text-green-500">
+                <Facebook className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" aria-label="Twitter" className="hover:text-green-500">
+                <Twitter className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" aria-label="Instagram" className="hover:text-green-500">
+                <Instagram className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" aria-label="YouTube" className="hover:text-green-500">
+                <Youtube className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
+          
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+            <h3 className="font-medium text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/events" className="text-gray-400 hover:text-white">
-                  Events
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-gray-400 hover:text-white">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/faq" className="text-gray-400 hover:text-white">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-gray-400 hover:text-white">
+                <Link href="/blog" className="text-muted-foreground hover:text-foreground transition">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/volunteer" className="text-gray-400 hover:text-white">
-                  Volunteer
+                <Link href="/resources/guides" className="text-muted-foreground hover:text-foreground transition">
+                  Cleanup Guides
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources/toolkits" className="text-muted-foreground hover:text-foreground transition">
+                  Organizer Toolkits
+                </Link>
+              </li>
+              <li>
+                <Link href="/impact" className="text-muted-foreground hover:text-foreground transition">
+                  Impact Reports
                 </Link>
               </li>
             </ul>
           </div>
+          
           <div>
-            <h4 className="text-lg font-semibold mb-4">Connect</h4>
+            <h3 className="font-medium text-lg mb-4">Company</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Twitter
-                </a>
+                <Link href="/about" className="text-muted-foreground hover:text-foreground transition">
+                  About Us
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Facebook
-                </a>
+                <Link href="/careers" className="text-muted-foreground hover:text-foreground transition">
+                  Careers
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Instagram
-                </a>
+                <Link href="/contact" className="text-muted-foreground hover:text-foreground transition">
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/partners" className="text-muted-foreground hover:text-foreground transition">
+                  Partners
+                </Link>
               </li>
             </ul>
           </div>
+          
+          <div>
+            <h3 className="font-medium text-lg mb-4">Stay Updated</h3>
+            <p className="text-muted-foreground mb-4">
+              Get the latest news about cleanup events and environmental initiatives.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Input type="email" placeholder="Your email" className="flex-grow" />
+              <Button className="bg-green-500 hover:bg-green-600 text-white">
+                Subscribe
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Bloom Refresh. All rights reserved.</p>
+        
+        <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Bloom Refresh. All rights reserved.
+          </p>
+          <div className="flex flex-wrap gap-4 mt-4 md:mt-0 text-sm text-muted-foreground">
+            <Link href="/privacy" className="hover:text-foreground transition">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-foreground transition">
+              Terms of Service
+            </Link>
+            <Link href="/cookies" className="hover:text-foreground transition">
+              Cookie Policy
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
   );
-} 
+};
+
+export default Footer;
